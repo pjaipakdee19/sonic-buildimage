@@ -1,0 +1,43 @@
+{
+    "psu_num": 2,
+    "fan_per_psu_num": 1,
+    "get_name": {
+            "oper_type": "fixed_list",
+            "value": [
+                    {
+                        "psu_name":"PSU-R",
+                        "fan_name":[
+                            "PSU-R-Fan"
+                        ],
+                        "presence_bit":4
+                    },
+                    {
+                        "psu_name":"PSU-L",
+                        "fan_name":[
+                            "PSU-L-Fan"
+                        ],
+                        "presence_bit":5
+                    }
+            ]
+    },
+    "get_power": {
+        "oper_type": "ipmi",
+        "command_template": "ipmitool sdr | grep {}",
+        "command": [
+            "PSUR_POut",
+            "PSUL_POut"
+        ],
+        "formula": "float('{}'.split()[2])"
+    },
+    "get_presence": {
+            "oper_type": "ipmi",
+            "command_template": "ipmitool raw 0x3a 0x0c 0x00 0x2 0x60",
+            "command":["0","0"],
+            "output_formula": [
+                "True if bin(0x{})[2:][::-1][4]=='0' else False",
+                "True if bin(0x{})[2:][::-1][5]=='0' else False"
+            ],
+            "default_output": "off"
+            
+    }
+}
