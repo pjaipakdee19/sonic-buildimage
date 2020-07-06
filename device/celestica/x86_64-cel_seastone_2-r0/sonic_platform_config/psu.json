@@ -55,5 +55,11 @@
             ],
             "default_output": "off"
             
+    },
+    "get_powergood_status": {
+            "oper_type": "ipmi",
+            "command_template": "ipmitool raw 0x04 0x2d {}",
+            "command":["0x72","0x73"],
+            "formula":"False if( ((int(  (re.search('^.+ ([0-9a-f]{{2}}) .+$', '{0}').group(1) ), 16) >> 1) & 1)  or ((int(  (re.search('^.+ ([0-9a-f]{{2}}) .+$', '{0}').group(1) ), 16) >> 3) & 1) )else True"
     }
 }

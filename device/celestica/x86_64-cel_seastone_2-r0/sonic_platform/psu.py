@@ -159,7 +159,15 @@ class Psu(PsuBase):
             A boolean, True if PSU has stablized its output voltages and passed all
             its internal self-tests, False if not.
         """
-        raise NotImplementedError
+        f_name = inspect.stack()[0][3]
+        config = self._config.get(f_name)
+        ret_val = False
+
+        if config.get('oper_type') == Common.OPER_IMPI:
+            status, result = self._api_common.ipmi_get(self.psu_index, config)
+            ret_val = result if status else ret_val
+
+        return ret_val 
 
     def set_status_led(self, color):
         """
