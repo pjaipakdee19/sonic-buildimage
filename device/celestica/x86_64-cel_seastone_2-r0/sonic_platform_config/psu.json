@@ -29,6 +29,24 @@
         ],
         "formula": "float('{}'.split()[2])"
     },
+    "get_current": {
+        "oper_type": "ipmi",
+        "command_template": "ipmitool sdr | grep {}",
+        "command": [
+            "PSUR_COut",
+            "PSUL_COut"
+        ],
+        "formula": "float('{}'.split()[2])"
+    },
+    "get_voltage": {
+        "oper_type": "ipmi",
+        "command_template": "ipmitool sdr | grep {}",
+        "command": [
+            "PSUR_VOut",
+            "PSUL_VOut"
+        ],
+        "formula": "float('{}'.split()[2])"
+    },
     "get_presence": {
             "oper_type": "ipmi",
             "command_template": "ipmitool raw 0x3a 0x0c 0x00 0x2 0x60",
