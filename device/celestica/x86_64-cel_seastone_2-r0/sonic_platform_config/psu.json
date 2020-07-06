@@ -8,15 +8,13 @@
                         "psu_name":"PSU-R",
                         "fan_name":[
                             "PSU-R-Fan"
-                        ],
-                        "presence_bit":4
+                        ]
                     },
                     {
                         "psu_name":"PSU-L",
                         "fan_name":[
                             "PSU-L-Fan"
-                        ],
-                        "presence_bit":5
+                        ]
                     }
             ]
     },
