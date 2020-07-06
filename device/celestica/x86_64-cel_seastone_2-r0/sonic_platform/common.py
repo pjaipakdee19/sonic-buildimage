@@ -81,8 +81,6 @@ class Common:
         elif config.get('output_formula'):
             ret_val = eval(config['output_formula'][index].format(result))
         else:
-            print(result)
-            print(config['formula'])
             ret_val = eval(config['formula'].format(result))
         return status, ret_val
 
