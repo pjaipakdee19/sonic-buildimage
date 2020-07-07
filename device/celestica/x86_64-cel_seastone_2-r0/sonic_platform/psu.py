@@ -163,7 +163,10 @@ class Psu(PsuBase):
     def set_status_led(self, color):
         """
         Sets the state of the PSU status LED
-
+        Note:
+            Seastone2 CPLD able to set only AMBER color.
+            This function should be disable auto mode before execute 
+            command: ipmitool raw 0x3a 0x0f 0x02 0x00
         Args:
             color: A string representing the color with which to set the
                    PSU status LED
@@ -171,16 +174,32 @@ class Psu(PsuBase):
         Returns:
             bool: True if status LED state is set successfully, False if not
         """
-        raise NotImplementedError
+        f_name = inspect.stack()[0][3]
+        config = self._config.get(f_name)
+
+        default = False
+        avaliable_input = config.get('avaliable_input')
+        if avaliable_input and color not in avaliable_input:
+            return False
+
+        return self._api_common.set_val(self.psu_index, color, config) if self.get_presence() else default
 
     def get_status_led(self):
         """
         Gets the state of the PSU status LED
-
+        Note:
+            Seastone2 PSU LED got only 2 mode, AMBER and Hardware control mode.
         Returns:
             A string, one of the predefined STATUS_LED_COLOR_* strings above
         """
-        raise NotImplementedError
+        f_name = inspect.stack()[0][3]
+        config = self._config.get(f_name)
+        ret_val = "off" 
+
+        if self.get_presence() and config.get('oper_type') == Common.OPER_IMPI:
+            status, led_color = self._api_common.ipmi_get(self.psu_index, config)
+
+        return led_color if status else ret_val
 
     def get_temperature(self):
         """
