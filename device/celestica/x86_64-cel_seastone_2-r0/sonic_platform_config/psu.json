@@ -45,6 +45,24 @@
         ],
         "formula": "float('{}'.split()[2])"
     },
+    "get_voltage_high_threshold": {
+       "oper_type": "ipmi",
+            "command_template": "ipmitool sensor list | grep {}",
+            "command": [
+            "PSUR_Temp2",
+            "PSUL_Temp2"
+        ],
+        "formula": "float(0 if '{0}'.split()[-3]=='na' else '{0}'.split()[-3])"
+    },
+    "get_voltage_low_threshold": {
+        "oper_type": "ipmi",
+            "command_template": "ipmitool sensor list | grep {}",
+            "command": [
+            "PSUR_Temp2",
+            "PSUL_Temp2"
+        ],
+        "formula": "float(0 if '{0}'.split()[-9]=='na' else '{0}'.split()[-9])"
+    },
     "get_presence": {
             "oper_type": "ipmi",
             "command_template": "ipmitool raw 0x3a 0x0c 0x00 0x2 0x60",

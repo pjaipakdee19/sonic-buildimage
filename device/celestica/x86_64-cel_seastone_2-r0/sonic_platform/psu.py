@@ -16,6 +16,7 @@ import inspect
 try:
     from sonic_platform_base.psu_base import PsuBase
     from common import Common
+    from sonic_platform.fan import Fan
 except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
 
@@ -31,15 +32,7 @@ class Psu(PsuBase):
         self._config = conf
         self._api_common = Common()
         self._name = self.get_name()
-        #self._is_psu_fan = is_psu_fan
-
-        # self._is_psu_fan = is_psu_fan
-        # if self._is_psu_fan:
-        #     self.psu_index = psu_index
-        #     self.psu_i2c_num = PSU_I2C_MAPPING[self.psu_index]["num"]
-        #     self.psu_i2c_addr = PSU_I2C_MAPPING[self.psu_index]["addr"]
-        #     self.psu_hwmon_path = PSU_HWMON_PATH.format(
-        #         self.psu_i2c_num, self.psu_i2c_addr)
+        self._fan_list = self.get_all_fans()
 
     def get_num_fans(self):
         """
@@ -49,14 +42,13 @@ class Psu(PsuBase):
             An integer, the number of fan modules available on this PSU
         """
         default = Common.NULL_VAL
-        f_name = inspect.stack()[0][3]
         config = self._config.get("get_name")
 
         psu_attr = self._api_common.get_val(self.psu_index, config, default)
         
         __fan_list = psu_attr['fan_name']
 
-        return len(self._fan_list) if self.get_presence() else default
+        return len(__fan_list) if self.get_presence() else default
 
     def get_all_fans(self):
         """
@@ -67,14 +59,13 @@ class Psu(PsuBase):
             modules available on this PSU
         """
         default = Common.NULL_VAL
-        f_name = inspect.stack()[0][3]
         config = self._config.get("get_name")
 
         psu_attr = self._api_common.get_val(self.psu_index, config, default)
         
         __fan_list = psu_attr['fan_name']
 
-        return self._fan_list if self.get_presence() else default
+        return __fan_list if self.get_presence() else default
 
     def get_fan(self, index):
         """
@@ -226,7 +217,8 @@ class Psu(PsuBase):
         Upper Non-Recoverable
 
         Returns:
-            ucr as float number, the high threshold temperature of PSU in Celsius
+            ucr as float number and return 0 if the BMC output is na.
+            The high threshold temperature of PSU in Celsius
             up to nearest thousandth of one degree Celsius, e.g. 30.125
         """
         f_name = inspect.stack()[0][3]
@@ -244,20 +236,38 @@ class Psu(PsuBase):
         Retrieves the high threshold PSU voltage output
 
         Returns:
+            ucr as float number and return 0 if the BMC output is na.
             A float number, the high threshold output voltage in volts, 
             e.g. 12.1 
         """
-        raise NotImplementedError
+        f_name = inspect.stack()[0][3]
+        config = self._config.get(f_name)
+        ret_val = 0
+
+        if self.get_presence() and config.get('oper_type') == Common.OPER_IMPI:
+            status, result = self._api_common.ipmi_get(self.psu_index, config)
+            raw_val = result if status else ret_val
+
+        return float(raw_val)
 
     def get_voltage_low_threshold(self):
         """
         Retrieves the low threshold PSU voltage output
 
         Returns:
+            lcr as float number and return 0 if the BMC output is na.
             A float number, the low threshold output voltage in volts, 
             e.g. 12.1 
         """
-        raise NotImplementedError
+        f_name = inspect.stack()[0][3]
+        config = self._config.get(f_name)
+        ret_val = 0
+
+        if self.get_presence() and config.get('oper_type') == Common.OPER_IMPI:
+            status, result = self._api_common.ipmi_get(self.psu_index, config)
+            raw_val = result if status else ret_val
+
+        return float(raw_val)
 
     def get_name(self):
         """
