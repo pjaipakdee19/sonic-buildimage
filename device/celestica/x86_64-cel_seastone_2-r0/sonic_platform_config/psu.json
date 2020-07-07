@@ -88,16 +88,16 @@
         "input_transform": "'0x1' if '{0}' == 'amber' else '0x0'",
         "command_template": "ipmitool raw 0x3a 0x0a {}",
         "command": [
-            "0x2 {}",
-            "0x3 {}"
+            "0x3 {}",
+            "0x2 {}"
         ]
     },
     "get_status_led": {
         "oper_type": "ipmi",
         "command_template": "ipmitool raw 0x3a 0x0b {}",
         "command": [
-            "0x2",
-            "0x3"
+            "0x3",
+            "0x2"
         ],
         "output_transform": {
             "00": "green",
