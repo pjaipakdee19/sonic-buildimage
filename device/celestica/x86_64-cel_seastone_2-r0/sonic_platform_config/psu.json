@@ -70,5 +70,14 @@
             "PSUL_Temp2"
         ],
         "formula": "float('{}'.split()[2])"
+    },
+    "get_temperature_high_threshold": {
+            "oper_type": "ipmi",
+            "command_template": "ipmitool sensor list | grep {}",
+            "command": [
+            "PSUR_Temp2",
+            "PSUL_Temp2"
+        ],
+        "formula": "float(0 if '{0}'.split()[-3]=='na' else '{0}'.split()[-3])"
     }
 }
