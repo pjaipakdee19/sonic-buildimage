@@ -199,7 +199,15 @@ class Psu(PsuBase):
             A float number of current temperature in Celsius up to nearest thousandth
             of one degree Celsius, e.g. 30.125 
         """
-        raise NotImplementedError
+        f_name = inspect.stack()[0][3]
+        config = self._config.get(f_name)
+        ret_val = 0
+
+        if self.get_presence() and config.get('oper_type') == Common.OPER_IMPI:
+            status, result = self._api_common.ipmi_get(self.psu_index, config)
+            raw_val = result if status else ret_val
+
+        return float(raw_val)
 
     def get_temperature_high_threshold(self):
         """
